@@ -15,10 +15,11 @@ public class DbConnection {
 	private static String USER = "projects";
 	
 	public static Connection getConnection() {
+		//builds the URL string using the format method and the static variables established above
 		String url = String.format("jdbc:mysql://%s:%d/%s?user=%s&password=%s&useSSL=false", HOST, PORT, SCHEMA, USER, PASSWORD);
 		System.out.println("Connecting with url = "+url);
 		
-
+		//try catch statement which throws an error if theres a runtime exception
 		try {
 			Connection conn = DriverManager.getConnection(url);
 			System.out.println("Successfully obtained connection!");
