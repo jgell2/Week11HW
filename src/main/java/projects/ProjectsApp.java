@@ -1,6 +1,7 @@
 package projects;
 
 import java.math.BigDecimal;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -13,12 +14,15 @@ public class ProjectsApp {
 	// scanner used for user input, project services creates an instance of the projects service class
 	private Scanner scanner = new Scanner(System.in);
 	private ProjectsService projectsService = new ProjectsService();
+	private Project curProject;
 	
 	// list below is utilized in menu app to show the options
 	
 	// @formatter:off
 	private List<String> operations = List.of(
-		"1) Add a project"
+		"1) Add a project",
+		"2) List projects",
+		"3) Select a project"
 	);
 	// @formatter:on
 
@@ -49,6 +53,14 @@ public class ProjectsApp {
 					createProject();
 					break;
 					
+				case 2:
+					listProjects();
+					break;
+					
+				case 3:
+					selectProject();
+					break;
+					
 					default:
 						System.out.println("\n" + selection + " is not a valid selection. Try again.");
 				}
@@ -59,6 +71,34 @@ public class ProjectsApp {
 			}
 		}
 				
+	}
+
+	
+	// sends user input to Project Service layer & keeps track of the project the user has selected with CurProject
+	private void selectProject() {
+		listProjects();
+		
+		Integer projectId = getIntInput("Select a project ID");
+		
+		curProject = null;
+		
+		curProject = projectsService.fetchProjectById(projectId);
+		
+		if(Objects.isNull(curProject)) {
+			System.out.println("\nInvalid recipe selected. ");
+		}
+		
+	}
+
+	// sends user input to Project Services which retrieves the data from the DAO layer. Once the data is received by the DAO layer from the Service layer, this method prints out all projects
+	private void listProjects() {
+		List<Project> projects = projectsService.fetchAllProjects();
+		
+		System.out.println("\nProjects:");
+		
+		projects.forEach(project -> System.out.println("   " + project.getProjectId()+ ": " + project.getProjectName()));
+		
+		
 	}
 
 
@@ -150,6 +190,12 @@ public class ProjectsApp {
 		System.out.println("\nThese are the available selections. Press the Enter key to quit.");
 		
 		operations.forEach(line -> System.out.println("   " + line));
+		
+		if(Objects.isNull(curProject)) {
+			System.out.println("\nYou are not working with a project");
+		} else {
+			System.out.println("\nYou are working with project: "+ curProject);
+		}
 		
 		
 		
