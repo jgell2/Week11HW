@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import projects.dao.ProjectsDao;
 import projects.entity.Project;
+import projects.exception.DbException;
 
 public class ProjectsService {
 	// creates an instance of the projectDao class which is where our SQL statement will be put together and sent off to the database
@@ -25,6 +26,20 @@ public class ProjectsService {
 	public Project fetchProjectById(Integer projectId) {
 		return projectDao.fetchProjectById(projectId).orElseThrow(() -> new NoSuchElementException("Project with project ID=" + projectId + "does not exist."));
 			
+	}
+	
+	//ensures that the the project to be updated exists & passes user input info through to the data layer
+	public void modifyProjectDetails(Project project) {
+		if(!projectDao.modifyProjectDetails(project)) {
+			throw new DbException("Project with ID=" + project.getProjectId() + " does not exist.");
+		}
+	}
+
+	public void deleteProject(Integer projectId) {
+		if(!projectDao.deleteProject(projectId)) {
+			throw new DbException("Project with ID=" + projectId + " does not exist.");
+		}
+		
 	}
 
 }
